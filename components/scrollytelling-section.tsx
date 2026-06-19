@@ -14,110 +14,114 @@ const scrollytellingData: ScrollytellingItem[] = [
   {
     title: "Meine Reise",
     description: "Entdecke meine Geschichte und wie ich zur Webentwicklung kam.",
-    image: "/placeholder.jpg"
+    image: "/placeholder.jpg",
   },
   {
     title: "Leidenschaft für Code",
     description: "Programmieren ist mehr als nur Arbeit – es ist meine Leidenschaft.",
-    image: "/placeholder-user.jpg"
+    image: "/placeholder-user.jpg",
   },
   {
     title: "Kontinuierliches Lernen",
     description: "In der sich ständig weiterentwickelnden Tech-Welt bleibt man nie stehen.",
-    image: "/placeholder-logo.png"
+    image: "/placeholder-logo.png",
   },
   {
     title: "Gemeinschaft & Zusammenarbeit",
     description: "Die besten Projekte entstehen durch Zusammenarbeit und Wissensteilung.",
-    image: "/placeholder.jpg"
-  }
+    image: "/placeholder.jpg",
+  },
+  {
+    title: "Design trifft Funktion",
+    description: "Ästhetik und Benutzerfreundlichkeit gehen für mich Hand in Hand.",
+    image: "/placeholder-user.jpg",
+  },
+  {
+    title: "Performance im Fokus",
+    description: "Schnelle, zugängliche und robuste Websites sind mein Anspruch.",
+    image: "/placeholder-logo.png",
+  },
+  {
+    title: "Blick nach vorn",
+    description: "Ich freue mich auf neue Herausforderungen und spannende Projekte.",
+    image: "/placeholder.jpg",
+  },
 ]
 
 export function ScrollytellingSection() {
   const sectionRef = useRef<HTMLDivElement>(null)
-  const leftContentRef = useRef<HTMLDivElement>(null)
-  const rightContentRef = useRef<HTMLDivElement>(null)
+  const trackRef = useRef<HTMLDivElement>(null)
   const [activeIndex, setActiveIndex] = useState(0)
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger)
 
     const section = sectionRef.current
-    if (!section) return
+    const track = trackRef.current
+    if (!section || !track) return
 
-    // Create scroll triggers for each item
-    const triggers: ScrollTrigger[] = []
+    const total = scrollytellingData.length
 
-    scrollytellingData.forEach((_, index) => {
-      const trigger = ScrollTrigger.create({
-        trigger: section,
-        start: `${index * 25}% top`,
-        end: `${(index + 1) * 25}% top`,
-        onEnter: () => setActiveIndex(index),
-        onEnterBack: () => setActiveIndex(index),
-        scrub: true
+    const ctx = gsap.context(() => {
+      // Vertical film reel: the track slides up continuously as you scroll,
+      // pushing the next image from the bottom into view.
+      gsap.to(track, {
+        y: () => -(total - 1) * window.innerHeight,
+        ease: "none",
+        scrollTrigger: {
+          trigger: section,
+          start: "top top",
+          end: "bottom bottom",
+          scrub: true,
+          invalidateOnRefresh: true,
+          onUpdate: (self) => {
+            const idx = Math.min(total - 1, Math.round(self.progress * (total - 1)))
+            setActiveIndex(idx)
+          },
+        },
       })
-      triggers.push(trigger)
-    })
+    }, section)
+
+    ScrollTrigger.refresh()
 
     return () => {
-      triggers.forEach(trigger => trigger.kill())
+      ctx.revert()
     }
   }, [])
 
   return (
-    <div 
+    <div
       ref={sectionRef}
-      className="relative min-h-[400vh] bg-black"
+      className="relative bg-black"
+      style={{ height: `${scrollytellingData.length * 100}vh` }}
     >
-      {/* Fixed background container */}
       <div className="sticky top-0 h-screen overflow-hidden">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-full">
-          <div className="grid md:grid-cols-2 gap-12 h-full items-center">
-            {/* Left: Fixed info block */}
-            <div 
-              ref={leftContentRef}
-              className="relative z-10"
-            >
-              <div className="bg-black/80 backdrop-blur-sm p-8 rounded-lg border border-gray-800">
-                <h2 className="text-4xl font-bold text-white mb-6">
-                  {scrollytellingData[activeIndex].title}
-                </h2>
-                <p className="text-xl text-gray-300 leading-relaxed">
-                  {scrollytellingData[activeIndex].description}
-                </p>
-              </div>
-            </div>
-
-            {/* Right: Fixed image block */}
-            <div 
-              ref={rightContentRef}
-              className="relative z-10"
-            >
-              <div className="relative h-[500px] rounded-lg overflow-hidden border border-gray-800">
-                <img
-                  src={scrollytellingData[activeIndex].image}
-                  alt={scrollytellingData[activeIndex].title}
-                  className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500"
-                  key={activeIndex}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-              </div>
-            </div>
+        {/* Left: info block on the left half */}
+        <div className="absolute left-0 top-0 z-10 flex h-full w-full items-center px-6 md:w-1/2 lg:px-16">
+          <div className="bg-black/80 backdrop-blur-sm p-8 border border-gray-800">
+            <h2 className="text-4xl font-bold text-white mb-6 text-balance">
+              {scrollytellingData[activeIndex].title}
+            </h2>
+            <p className="text-xl text-gray-300 leading-relaxed text-pretty">
+              {scrollytellingData[activeIndex].description}
+            </p>
           </div>
         </div>
-      </div>
 
-      {/* Scroll progress indicator */}
-      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex gap-2">
-        {scrollytellingData.map((_, index) => (
-          <div
-            key={index}
-            className={`w-3 h-3 rounded-full transition-all duration-300 ${
-              index === activeIndex ? "bg-white scale-125" : "bg-gray-600"
-            }`}
-          />
-        ))}
+        {/* Right: film reel occupying exactly the right half of the viewport */}
+        <div className="absolute right-0 top-0 h-full w-1/2 overflow-hidden">
+          <div ref={trackRef} className="will-change-transform">
+            {scrollytellingData.map((item, index) => (
+              <div key={index} className="h-screen w-full overflow-hidden">
+                <img
+                  src={item.image || "/placeholder.svg"}
+                  alt={item.title}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   )
