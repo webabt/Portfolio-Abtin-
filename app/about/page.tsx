@@ -5,12 +5,14 @@ import { ScrollTrigger } from "gsap/ScrollTrigger"
 import gsap from "gsap"
 import { Footer } from "@/components/footer"
 import { ScrollytellingSection } from "@/components/scrollytelling-section"
+import { ParallaxImageSection } from "@/components/parallax-image-section"
 
 const phrase =
   "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters."
 
 export default function AboutPage() {
   const containerRef = useRef<HTMLElement>(null)
+  const bodyRef = useRef<HTMLDivElement>(null)
   const letterRefs = useRef<(HTMLSpanElement | null)[]>([])
   const words = useMemo(() => phrase.split(" "), [])
 
@@ -21,7 +23,7 @@ export default function AboutPage() {
 
     const rafId = requestAnimationFrame(() => {
       const letters = letterRefs.current.filter((el): el is HTMLSpanElement => el !== null)
-      if (!letters.length || !containerRef.current) return
+      if (!letters.length || !bodyRef.current) return
 
       gsapContext = gsap.context(() => {
         gsap.fromTo(
@@ -32,10 +34,10 @@ export default function AboutPage() {
             ease: "none",
             stagger: 0.1,
             scrollTrigger: {
-              trigger: containerRef.current,
+              trigger: bodyRef.current,
               scrub: true,
               start: "top bottom",
-              end: `+=${window.innerHeight * 1.5}`,
+              end: "bottom center",
             },
           },
         )
@@ -57,7 +59,7 @@ export default function AboutPage() {
       <ScrollytellingSection />
       
       <main ref={containerRef} className="main">
-        <div className="body">
+        <div ref={bodyRef} className="body">
           {words.map((word, wordIndex) => (
             <p key={`${word}-${wordIndex}`} className="word">
               {word.split("").map((letter, charIndex) => {
@@ -78,6 +80,9 @@ export default function AboutPage() {
           ))}
         </div>
       </main>
+
+      <ParallaxImageSection />
+
       <Footer />
 
       <style jsx>{`
@@ -86,7 +91,6 @@ export default function AboutPage() {
           height: 100vh;
           align-items: flex-end;
           justify-content: center;
-          margin-bottom: 100vh;
           color: rgb(211, 211, 211);
         }
 
