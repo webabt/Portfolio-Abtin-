@@ -26,19 +26,11 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <head>
-        <style>{`
-html {
-  font-family: ${GeistSans.style.fontFamily};
-  --font-sans: ${GeistSans.variable};
-  --font-mono: ${GeistMono.variable};
-  --font-poppins: ${poppins.style.fontFamily};
-  --font-mak: 'MAK', ${poppins.style.fontFamily}, sans-serif;
-}
-        `}</style>
-      </head>
-      <body className={`${poppins.variable} font-sans`}>
+    <html
+      lang="en"
+      className={`${GeistSans.variable} ${GeistMono.variable} ${poppins.variable} bg-background`}
+    >
+      <body className="font-sans">
         <LenisProvider>
           <Header />
           {children}
