@@ -6,6 +6,8 @@ import gsap from "gsap"
 import { Footer } from "@/components/footer"
 import { ScrollytellingSection } from "@/components/scrollytelling-section"
 import { ParallaxImageSection } from "@/components/parallax-image-section"
+import { ParallaxCardsSection } from "@/components/parallax-cards-section"
+import { FullscreenSvgSection } from "@/components/fullscreen-svg-section"
 
 const phrase =
   "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters."
@@ -83,6 +85,10 @@ export default function AboutPage() {
 
       <ParallaxImageSection />
 
+      <ParallaxCardsSection />
+
+      <FullscreenSvgSection />
+
       <Footer />
 
       <style jsx>{`
@@ -92,6 +98,7 @@ export default function AboutPage() {
           align-items: flex-end;
           justify-content: center;
           color: rgb(211, 211, 211);
+          margin-bottom: 40vh;
         }
 
         .body {
