@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 import "./globals.css"
-import { Poppins, JetBrains_Mono } from "next/font/google"
+import { Poppins } from "next/font/google"
 import { Header } from "@/components/header"
 import { MouseFollower } from "@/components/mouse-follower"
 import { LenisProvider } from "@/components/lenis-smooth-scroll"
@@ -28,14 +28,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link href="https://fonts.googleapis.com/css2?family=Mak&display=swap" rel="stylesheet" />
         <style>{`
 html {
   font-family: ${GeistSans.style.fontFamily};
   --font-sans: ${GeistSans.variable};
   --font-mono: ${GeistMono.variable};
   --font-poppins: ${poppins.style.fontFamily};
-  --font-mak: 'Mak', sans-serif;
+  --font-mak: 'MAK', ${poppins.style.fontFamily}, sans-serif;
 }
         `}</style>
       </head>
